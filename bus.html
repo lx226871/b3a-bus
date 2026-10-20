@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#080b12">
+<title>B3A 富泰邨 ⇄ 深圳灣口岸</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ffd21e'/%3E%3Ctext x='50' y='66' font-family='Arial,sans-serif' font-size='46' font-weight='bold' text-anchor='middle' fill='%2314181f'%3EB3A%3C/text%3E%3C/svg%3E">
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+    background:
+      radial-gradient(1100px 560px at 50% -12%, rgba(255, 210, 30, .10), transparent 62%),
+      radial-gradient(900px 520px at 105% 112%, rgba(58, 120, 255, .13), transparent 62%),
+      #080b12;
+    color: #eef2f8;
+    font-family: "Inter", "Segoe UI", "Noto Sans TC", "PingFang HK", "Microsoft JhengHei", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { width: min(560px, 100%); }
+
+  .card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .09);
+    border-radius: 26px;
+    padding: 26px 26px 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, .055), rgba(255, 255, 255, .022));
+    box-shadow: 0 30px 80px -24px rgba(0, 0, 0, .85), inset 0 1px 0 rgba(255, 255, 255, .06);
+    backdrop-filter: blur(10px);
+  }
+
+  /* ---------- header ---------- */
+  .head { display: flex; align-items: center; gap: 16px; }
+
+  .badge {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    min-width: 86px;
+    height: 56px;
+    padding: 0 12px;
+    border-radius: 15px;
+    background: #ffd21e;
+    color: #14181f;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    box-shadow: 0 10px 28px -10px rgba(255, 210, 30, .6);
+  }
+
+  .title h1 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: .2px;
+  }
+  .title .arrow { color: #ffd21e; font-weight: 600; }
+  .title p { margin: 4px 0 0; font-size: 12.5px; color: #93a0b4; letter-spacing: .25px; }
+
+  .refresh {
+    margin-left: auto;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .12);
+    background: rgba(255, 255, 255, .04);
+    color: #cfd8e6;
+    cursor: pointer;
+    transition: background .2s, color .2s, transform .12s;
+  }
+  .refresh:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+  .refresh:active { transform: scale(.93); }
+  .refresh.spin svg { animation: spin .9s linear infinite; }
+
+  /* ---------- direction sections ---------- */
+  .dir { margin-top: 22px; }
+  .dir + .dir {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, .07);
+  }
+
+  .dir-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .dir-route {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .2px;
+    color: #d3dcea;
+  }
+  .dir-route .arrow { color: #ffd21e; font-weight: 600; }
+  .dir-tag {
+    flex: 0 0 auto;
+    font-size: 10.5px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #7d8aa0;
+  }
+
+  /* ---------- next bus ---------- */
+  .hero {
+    padding: 18px 20px 20px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 20px;
+    background:
+      radial-gradient(130% 130% at 0% 0%, rgba(255, 210, 30, .13), transparent 58%),
+      rgba(255, 255, 255, .032);
+  }
+  .hero-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #97a3b7;
+  }
+  .kicker em { font-style: normal; color: #6b7690; margin-left: 6px; }
+  .clock { font-variant-numeric: tabular-nums; letter-spacing: .5px; }
+
+  .hero-body { display: flex; align-items: baseline; gap: 10px; margin-top: 4px; }
+  .num {
+    font-size: clamp(64px, 17vw, 96px);
+    font-weight: 800;
+    line-height: .96;
+    letter-spacing: -.045em;
+    color: #ffd21e;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 8px 44px rgba(255, 210, 30, .22);
+  }
+  .num.word { font-size: clamp(40px, 10vw, 56px); letter-spacing: -.02em; }
+  .unit { font-size: 20px; font-weight: 600; color: #9aa6b9; }
+
+  .note {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 6px 10px;
+    border: 1px solid rgba(255, 210, 30, .18);
+    border-radius: 8px;
+    background: rgba(255, 210, 30, .08);
+    color: #ffcf66;
+    font-size: 12.5px;
+  }
+
+  /* secondary board (return direction) */
+  .dir.secondary .hero { padding: 15px 18px 17px; }
+  .dir.secondary .num { font-size: clamp(46px, 12vw, 62px); }
+  .dir.secondary .num.word { font-size: clamp(32px, 8vw, 44px); }
+  .dir.secondary .upcoming li { padding: 10px 14px; }
+
+  /* ---------- following buses ---------- */
+  .upcoming {
+    display: grid;
+    gap: 8px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .upcoming li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, .06);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .028);
+  }
+  .rank {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .06);
+    color: #8b97ab;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .mins {
+    min-width: 72px;
+    color: #e9eef7;
+    font-size: 16px;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+  }
+  .upcoming .clock { margin-left: auto; color: #7f8ba0; font-size: 13px; }
+
+  .solo {
+    margin-top: 14px;
+    padding: 13px 16px;
+    border: 1px dashed rgba(255, 255, 255, .09);
+    border-radius: 14px;
+    color: #71809a;
+    font-size: 12.5px;
+    text-align: center;
+  }
+
+  /* ---------- states ---------- */
+  .empty { padding: 34px 16px; text-align: center; }
+  .empty-big { font-size: 21px; font-weight: 700; color: #dbe3ef; }
+  .empty-en { margin-top: 6px; color: #8a97ab; font-size: 12.5px; }
+  .empty-note { margin-top: 12px; color: #65718a; font-size: 12px; }
+
+  .loader {
+    width: 26px;
+    height: 26px;
+    margin: 0 auto 14px;
+    border: 2px solid rgba(255, 210, 30, .22);
+    border-top-color: #ffd21e;
+    border-radius: 50%;
+    animation: spin .9s linear infinite;
+  }
+
+  /* ---------- footer ---------- */
+  .foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 2px;
+    color: #8592a6;
+    font-size: 12px;
+  }
+  .live { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .live #status {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dot {
+    flex: 0 0 auto;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #5c6a7e;
+  }
+  .dot.ok { background: #35d07f; box-shadow: 0 0 0 4px rgba(53, 208, 127, .13); animation: pulse 2.4s ease-in-out infinite; }
+  .dot.err { background: #ff6b6b; box-shadow: 0 0 0 4px rgba(255, 107, 107, .13); }
+  .dot.load { background: #ffd21e; animation: pulse 1.2s ease-in-out infinite; }
+
+  .cd { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .cd b { color: #cfd8e6; font-weight: 600; }
+
+  .progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, .05);
+  }
+  .progress span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ffd21e, #ffb300);
+    opacity: .85;
+    animation: drain 30s linear forwards;
+  }
+
+  .credit {
+    margin: 14px 0 0;
+    color: #5d6a7e;
+    font-size: 11px;
+    text-align: center;
+    letter-spacing: .2px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pulse { 50% { opacity: .45; } }
+  @keyframes drain { from { width: 100%; } to { width: 0%; } }
+
+  @media (max-width: 460px) {
+    body { padding: 14px; }
+    .card { padding: 20px 18px 0; border-radius: 22px; }
+    .badge { min-width: 72px; height: 48px; font-size: 22px; border-radius: 13px; }
+    .title h1 { font-size: 17px; }
+    .hero { padding: 16px; }
+    .upcoming li { padding: 11px 13px; }
+    .foot { font-size: 11px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <main class="card">
+      <header class="head">
+        <div class="badge">B3A</div>
+        <div class="title">
+          <h1>富泰邨 <span class="arrow">⇄</span> 深圳灣口岸</h1>
+          <p>Fu Tai Estate ⇄ Shenzhen Bay Port</p>
+        </div>
+        <button class="refresh" id="refresh" type="button" aria-label="立即更新" title="立即更新">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12a9 9 0 1 1-2.64-6.36"></path>
+            <polyline points="21 3 21 9 15 9"></polyline>
+          </svg>
+        </button>
+      </header>
+
+      <section class="dir">
+        <div class="dir-head">
+          <span class="dir-route">富泰邨 <span class="arrow">→</span> 深圳灣口岸</span>
+          <span class="dir-tag">去程 · Outbound</span>
+        </div>
+        <div id="boardOut" aria-live="polite" aria-atomic="true">
+          <div class="empty">
+            <div class="loader" aria-hidden="true"></div>
+            <div class="empty-note">正在載入班次…</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dir secondary" title="B3A 回程往山景邨，途經富泰商場">
+        <div class="dir-head">
+          <span class="dir-route">深圳灣口岸 <span class="arrow">→</span> 富泰邨</span>
+          <span class="dir-tag">回程 · Return</span>
+        </div>
+        <div id="boardRet" aria-live="polite" aria-atomic="true">
+          <div class="empty">
+            <div class="loader" aria-hidden="true"></div>
+            <div class="empty-note">正在載入班次…</div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <div class="live">
+          <span class="dot" id="dot"></span>
+          <span id="status">正在連線…</span>
+        </div>
+        <div class="cd">30 秒後更新 · <b id="countdown">30</b>s</div>
+      </footer>
+
+      <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+    </main>
+
+    <p class="credit">資料來源：DATA.GOV.HK · 城巴 Citybus 實時到站</p>
+  </div>
+
+<script>
+(() => {
+  "use strict";
+
+  // Citybus (CTB) ETA feeds
+  // out: stop 003261 Fu Tai Estate, Castle Peak Rd → Shenzhen Bay Port
+  // ret: stop 003208 Shenzhen Bay Port → Fu Tai / Shan King Estate
+  const BASE = "https://rt.data.gov.hk/v2/transport/citybus/eta/CTB/";
+  const FEEDS = [
+    { key: "out", stop: "003261", dir: "O" },
+    { key: "ret", stop: "003208", dir: "I" }
+  ];
+  const REFRESH_SEC = 30;
+
+  const $ = (id) => document.getElementById(id);
+  const btn = $("refresh");
+  const bar = $("bar");
+  const dot = $("dot");
+  const statusEl = $("status");
+  const countdown = $("countdown");
+
+  const state = {
+    out: { etas: [], error: null },
+    ret: { etas: [], error: null }
+  };
+
+  let busy = false;
+  let nextAt = Date.now() + REFRESH_SEC * 1000;
+  let timer = null;
+
+  const hkTime = (opts) => (ts) =>
+    new Date(ts).toLocaleTimeString("en-GB", Object.assign({ timeZone: "Asia/Hong_Kong" }, opts));
+
+  const clock = hkTime({ hour: "2-digit", minute: "2-digit" });
+  const clockSec = hkTime({ hour: "2-digit", minute: "2-digit", second: "2-digit" });
+
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[c]);
+
+  const minsTo = (t, now) => (t - now) / 60000;
+
+  function fmtMins(t, now) {
+    const m = minsTo(t, now);
+    return m <= 0.5 ? "Due" : Math.round(m) + " min";
+  }
+
+  async function fetchFeed(feed, signal) {
+    const res = await fetch(BASE + feed.stop + "/B3A?t=" + Date.now(), {
+      cache: "no-store",
+      signal
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+
+    const json = await res.json();
+    const now = Date.now();
+
+    return (Array.isArray(json.data) ? json.data : [])
+      .filter((e) => e && e.eta && e.dir === feed.dir)
+      .map((e) => ({ t: Date.parse(e.eta), note: (e.rmk_tc || e.rmk_en || "").trim() }))
+      .filter((e) => Number.isFinite(e.t) && e.t >= now - 60000)
+      .sort((a, b) => a.t - b.t);
+  }
+
+  function paint() {
+    const now = Date.now();
+
+    document.querySelectorAll("[data-eta]").forEach((el) => {
+      el.textContent = fmtMins(Number(el.dataset.eta), now);
+    });
+
+    document.querySelectorAll("[data-hero]").forEach((el) => {
+      const first = state[el.dataset.hero] && state[el.dataset.hero].etas[0];
+      if (!first) return;
+      const unit = el.parentElement.querySelector(".unit");
+      const m = minsTo(first.t, now);
+
+      if (m <= 0.5) {
+        el.textContent = "Due";
+        el.classList.add("word");
+        if (unit) unit.textContent = "即將到站";
+      } else {
+        el.textContent = String(Math.round(m));
+        el.classList.remove("word");
+        if (unit) unit.textContent = "min";
+      }
+    });
+  }
+
+  function emptyHTML(error) {
+    return error
+      ? '<div class="empty">' +
+          '<div class="empty-big">未能取得班次</div>' +
+          '<div class="empty-en">Couldn’t reach the Citybus feed</div>' +
+          '<div class="empty-note">30 秒後自動重試</div>' +
+        '</div>'
+      : '<div class="empty">' +
+          '<div class="empty-big">暫無班次</div>' +
+          '<div class="empty-en">No scheduled departures right now</div>' +
+          '<div class="empty-note">每 30 秒自動重新查詢</div>' +
+        '</div>';
+  }
+
+  function panelHTML(key) {
+    const { etas, error } = state[key];
+    if (!etas.length) return emptyHTML(error);
+
+    const first = etas[0];
+    const rest = etas.slice(1, 3);
+
+    return (
+      '<div class="hero">' +
+        '<div class="hero-head">' +
+          '<span class="kicker">下一班 <em>Next</em></span>' +
+          '<span class="clock">' + clock(first.t) + '</span>' +
+        '</div>' +
+        '<div class="hero-body">' +
+          '<span class="num" data-hero="' + key + '"></span>' +
+          '<span class="unit">min</span>' +
+        '</div>' +
+        (first.note ? '<div class="note">' + esc(first.note) + '</div>' : '') +
+      '</div>' +
+      (rest.length
+        ? '<ul class="upcoming">' + rest.map((e, i) =>
+            '<li>' +
+              '<span class="rank">' + (i + 2) + '</span>' +
+              '<span class="mins" data-eta="' + e.t + '"></span>' +
+              '<span class="clock">' + clock(e.t) + '</span>' +
+            '</li>').join('') + '</ul>'
+        : '<div class="solo">暫無更多班次 · No further buses listed</div>')
+    );
+  }
+
+  function render() {
+    $("boardOut").innerHTML = panelHTML("out");
+    $("boardRet").innerHTML = panelHTML("ret");
+    paint();
+  }
+
+  function setStatus(kind, text, title) {
+    dot.className = "dot " + kind;
+    statusEl.textContent = text;
+    statusEl.title = title || "";
+  }
+
+  function restartBar() {
+    bar.style.animation = "none";
+    void bar.offsetWidth;
+    bar.style.animation = "";
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    nextAt = Date.now() + REFRESH_SEC * 1000;
+    restartBar();
+    timer = setTimeout(load, REFRESH_SEC * 1000);
+  }
+
+  async function load() {
+    if (busy) return;
+    busy = true;
+    btn.classList.add("spin");
+    setStatus("load", "正在更新…", "");
+
+    const ctrl = new AbortController();
+    const abortTimer = setTimeout(() => ctrl.abort(), 12000);
+
+    try {
+      const results = await Promise.allSettled(FEEDS.map((f) => fetchFeed(f, ctrl.signal)));
+      let failed = 0;
+      let reason = "";
+
+      results.forEach((r, i) => {
+        const key = FEEDS[i].key;
+        if (r.status === "fulfilled") {
+          state[key].etas = r.value;
+          state[key].error = null;
+        } else {
+          state[key].error = r.reason;
+          failed++;
+          reason = String((r.reason && r.reason.message) || r.reason);
+        }
+      });
+
+      render();
+
+      if (!failed) {
+        setStatus("ok", "已更新 " + clockSec(Date.now()), "資料來源：DATA.GOV.HK");
+      } else {
+        setStatus(
+          "err",
+          failed === FEEDS.length ? "連線失敗，顯示上次資料" : "部分班次未能更新",
+          reason
+        );
+      }
+    } finally {
+      clearTimeout(abortTimer);
+      busy = false;
+      btn.classList.remove("spin");
+      schedule();
+    }
+  }
+
+  function tick() {
+    const left = Math.max(0, Math.ceil((nextAt - Date.now()) / 1000));
+    countdown.textContent = String(left);
+    paint();
+  }
+
+  btn.addEventListener("click", () => {
+    if (busy) return;
+    clearTimeout(timer);
+    load();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && !busy && Date.now() >= nextAt) {
+      clearTimeout(timer);
+      load();
+    }
+  });
+
+  setInterval(tick, 1000);
+  tick();
+  load();
+})();
+</script>
+</body>
+</html>
